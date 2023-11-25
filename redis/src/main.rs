@@ -1,35 +1,41 @@
-use std::{
-    io::{Read, Write},
-    net::{TcpListener, TcpStream},
-};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::{TcpListener, TcpStream};
 
-fn handle_connections(stream: &mut TcpStream) -> () {
+async fn handle_connections(mut stream: TcpStream) {
+    let mut buf = [0; 512];
     loop {
-        // Read
-        let mut buf: [u8; 512] = [0; 512];
-        let num_bytes_read = stream.read(&mut buf).unwrap();
-        if num_bytes_read == 0 {
-            return;
+        match stream.read(&mut buf).await {
+            Ok(0) => return, // connection was closed
+            Ok(_) => {
+                // Respond with PONG
+                if let Err(e) = stream.write(b"+PONG\r\n").await {
+                    eprintln!("Failed to write to stream: {}", e);
+                    return;
+                }
+            }
+            Err(e) => {
+                eprintln!("Failed to read from stream: {}", e);
+                return;
+            }
         }
-        // Write
-        let res = "+PONG\r\n";
-        stream.write(res.as_bytes()).unwrap();
-        stream.flush().unwrap();
     }
 }
 
-fn main() {
-    let listener = TcpListener::bind("127.0.0.1:6379").unwrap_or_else(|e| {
-        panic!("failed to bind to socket: {}", e);
-    });
+#[tokio::main]
+async fn main() {
+    let listener = TcpListener::bind("127.0.0.1:6379")
+        .await
+        .unwrap_or_else(|e| {
+            panic!("failed to bind to socket: {}", e);
+        });
 
-    for stream in listener.incoming() {
-        match stream {
-            Ok(mut r_stream) => {
-                handle_connections(&mut r_stream);
+    loop {
+        match listener.accept().await {
+            Ok((stream, _)) => {
+                tokio::spawn(handle_connections(stream));
             }
             Err(e) => {
-                panic!("failed to accept connection: {}", e);
+                eprintln!("failed to accept connection: {}", e);
             }
         }
     }

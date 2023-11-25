@@ -1,6 +1,6 @@
 # Redis build
 
-Redis from scratch in Rust.
+Redis from scratch in Rust. Inspired by [mini-redis](https://github.com/tokio-rs/mini-redis/)
 
 ## Instructions
 
