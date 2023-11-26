@@ -1,13 +1,20 @@
+extern crate resp;
+#[allow(unused_imports)]
+use resp::{encode, encode_slice, Decoder, Value};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
+
+pub mod utils;
 
 async fn handle_connections(mut stream: TcpStream) {
     let mut buf = [0; 512];
     loop {
         match stream.read(&mut buf).await {
-            Ok(0) => return, // connection was closed
-            Ok(_) => {
-                // Respond with PONG
+            Ok(0) => return,
+            Ok(bytes_read) => {
+                println!("bytes read: {}", bytes_read);
+                println!("buf: {:?}", &buf[..bytes_read]);
+
                 if let Err(e) = stream.write(b"+PONG\r\n").await {
                     eprintln!("Failed to write to stream: {}", e);
                     return;
