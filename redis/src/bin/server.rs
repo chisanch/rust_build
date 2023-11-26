@@ -4,8 +4,6 @@ use resp::{encode, encode_slice, Decoder, Value};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 
-pub mod utils;
-
 async fn handle_connections(mut stream: TcpStream) {
     let mut buf = [0; 512];
     loop {
