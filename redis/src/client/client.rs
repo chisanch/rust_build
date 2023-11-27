@@ -6,20 +6,11 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn new(host: &str, port: u16) -> Result<Client, std::io::Error> {
-        let connection = TcpStream::connect((host, port)).await?;
+    pub async fn new(addr: String) -> Result<Client, std::io::Error> {
+        let mut parts = addr.splitn(2, ":");
+        let host = parts.next().unwrap();
+        let port = parts.next().unwrap();    
+        let connection = TcpStream::connect((host.to_string(), port.parse::<u16>().unwrap())).await?;
         Ok(Client { connection })
     }
-
-    // pub async fn ping(&mut self, msg: Option<Bytes>) -> Result<Bytes, std::io::Error> {
-    //     let mut command = Bytes::from("PING");
-    //     if let Some(msg) = msg {
-    //         command.extend_from_slice(&b" "[..]);
-    //         command.extend_from_slice(&msg[..]);
-    //     }
-    //     self.connection.write_all(&command[..]).await?;
-    //     let mut response = Bytes::new();
-    //     self.connection.read_to_end(&mut response).await?;
-    //     Ok(response)
-    // }
 }

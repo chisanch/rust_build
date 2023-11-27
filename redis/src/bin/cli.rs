@@ -59,9 +59,34 @@ fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
-    println!("Hello, world!");
-
     let cli = Cli::parse();
     let addr = format!("{}:{}", cli.host, cli.port);
-    let mut client = Client::new(&addr);
+    let client = Client::new(addr).await.expect("Failed to create client");
+
+    match cli.command {
+        Command::Ping { .. } => {
+            // let response = client.ping(msg).await;
+            // println!("Response: {:?}", response);
+            println!("Pong");
+        },
+        // Command::Get { key } => {
+        //     let response = client.get(key).await;
+        //     println!("Response: {:?}", response);
+        // },
+        // Command::Set { key, value, expires } => {
+        //     let response = client.set(key, value, expires).await;
+        //     println!("Response: {:?}", response);
+        // },
+        // Command::Publish { channel, message } => {
+        //     let response = client.publish(channel, message).await;
+        //     println!("Response: {:?}", response);
+        // },
+        // Command::Subscribe { channels } => {
+        //     let response = client.subscribe(channels).await;
+        //     println!("Response: {:?}", response);
+        // },
+        _ => {
+            println!("Invalid command");
+        },
+    }
 }
