@@ -61,13 +61,12 @@ fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {
 async fn main() {
     let cli = Cli::parse();
     let addr = format!("{}:{}", cli.host, cli.port);
-    let client = Client::new(addr).await.expect("Failed to create client");
+    let _client = Client::new(addr).await.expect("Failed to create client");
 
     match cli.command {
         Command::Ping { .. } => {
-            // let response = client.ping(msg).await;
-            // println!("Response: {:?}", response);
-            println!("Pong");
+            let response = _client.ping().await;
+            println!("Response: {:?}", response);
         },
         // Command::Get { key } => {
         //     let response = client.get(key).await;
