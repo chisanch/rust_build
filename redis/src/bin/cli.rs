@@ -61,29 +61,13 @@ fn bytes_from_str(src: &str) -> Result<Bytes, Infallible> {
 async fn main() {
     let cli = Cli::parse();
     let addr = format!("{}:{}", cli.host, cli.port);
-    let _client = Client::new(addr).await.expect("Failed to create client");
+    let mut _client = Client::new(addr).await.expect("Failed to create client");
 
     match cli.command {
-        Command::Ping { .. } => {
-            let response = _client.ping().await;
+        Command::Ping { msg } => {
+            let response = _client.ping(msg).await;
             println!("Response: {:?}", response);
         },
-        // Command::Get { key } => {
-        //     let response = client.get(key).await;
-        //     println!("Response: {:?}", response);
-        // },
-        // Command::Set { key, value, expires } => {
-        //     let response = client.set(key, value, expires).await;
-        //     println!("Response: {:?}", response);
-        // },
-        // Command::Publish { channel, message } => {
-        //     let response = client.publish(channel, message).await;
-        //     println!("Response: {:?}", response);
-        // },
-        // Command::Subscribe { channels } => {
-        //     let response = client.subscribe(channels).await;
-        //     println!("Response: {:?}", response);
-        // },
         _ => {
             println!("Invalid command");
         },

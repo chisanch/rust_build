@@ -1,5 +1,5 @@
 use bytes::{BytesMut, Bytes};
-use tokio::{net::TcpStream, io::BufWriter};
+use tokio::{net::TcpStream, io::{AsyncWriteExt, BufWriter}};
 
 #[derive(Debug)]
 pub struct Connection {
@@ -27,6 +27,12 @@ impl Client {
 
     pub async fn ping(&mut self, msg: Option<Bytes>) -> Result<Bytes, std::io::Error> {
         
+        let message = match msg {
+            Some(m) => m,
+            None => Bytes::from("PING"),
+        };
+        self.connection.stream.write_all(&message).await?;
+        Ok(message)
     }
     
 }
