@@ -67,9 +67,9 @@ async fn main() {
         Command::Ping { msg } => {
             let response = _client.ping(msg).await;
             println!("Response: {:?}", response);
-        },
+        }
         _ => {
             println!("Invalid command");
-        },
+        }
     }
 }

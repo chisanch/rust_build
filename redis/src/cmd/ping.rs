@@ -1,18 +1,28 @@
 use bytes::Bytes;
-use resp::{Decoder, Value};
+use resp::{encode, Value};
 
 #[derive(Debug)]
 pub struct Ping {
-    msg: Option<Bytes>
+    msg: Option<Bytes>,
 }
 
 impl Ping {
     pub fn new(msg: Option<Bytes>) -> Ping {
-        let value = msg.and_then(|bytes| {
-            let mut decoder = Decoder::new(&bytes[..]);
-            decoder.decode().ok()
-        });
+        Ping { msg }
+    }
 
-        Ping { msg: value }
+    pub fn apply_encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        match &self.msg {
+            Some(msg) => {
+                bytes.extend_from_slice(b"+");
+                bytes.extend_from_slice(msg);
+                bytes.extend_from_slice(b"\r\n");
+            }
+            None => {
+                bytes.extend_from_slice(b"+PONG\r\n");
+            }
+        }
+        bytes
     }
 }

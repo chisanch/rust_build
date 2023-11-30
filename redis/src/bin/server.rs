@@ -13,6 +13,9 @@ async fn handle_connections(mut stream: TcpStream) {
                 println!("bytes read: {}", bytes_read);
                 println!("buf: {:?}", &buf[..bytes_read]);
 
+                // Read the bytes from the buffer and convert them to a string.
+                let s = String::from_utf8_lossy(&buf[..bytes_read]);
+
                 if let Err(e) = stream.write(b"+PONG\r\n").await {
                     eprintln!("Failed to write to stream: {}", e);
                     return;
