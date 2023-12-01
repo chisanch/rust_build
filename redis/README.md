@@ -6,9 +6,9 @@ Redis from scratch in Rust. Inspired by [mini-redis](https://github.com/tokio-rs
 
 ```bash 
 # run redis server
-cargo run
+cargo run --bin server
 
 # on separate shell
-nc localhost 6379
+cargo run --bin cli <command>
 
 ```

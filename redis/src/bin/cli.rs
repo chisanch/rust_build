@@ -56,6 +56,18 @@ async fn main() {
             let response = _client.ping().await;
             println!("Response: {:?}", response);
         }
+        Command::Get { key } => {
+            let response = _client.get(key).await;
+            println!("Response: {:?}", response);
+        }
+        Command::Set {
+            key,
+            value,
+            expires,
+        } => {
+            let response = _client.set(key, value, expires).await;
+            println!("Response: {:?}", response);
+        }
         _ => {
             println!("Invalid command");
         }
