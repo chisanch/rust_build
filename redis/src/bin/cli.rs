@@ -21,10 +21,7 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Command {
-    Ping {
-        #[clap(value_parser = bytes_from_str)]
-        msg: Option<Bytes>,
-    },
+    Ping {},
     Get {
         key: String,
     },
@@ -36,15 +33,6 @@ enum Command {
 
         #[clap(value_parser = duration_from_ms_str)]
         expires: Option<Duration>,
-    },
-    Publish {
-        channel: String,
-
-        #[clap(value_parser = bytes_from_str)]
-        message: Bytes,
-    },
-    Subscribe {
-        channels: Vec<String>,
     },
 }
 
@@ -64,8 +52,8 @@ async fn main() {
     let mut _client = Client::new(addr).await.expect("Failed to create client");
 
     match cli.command {
-        Command::Ping { msg } => {
-            let response = _client.ping(msg).await;
+        Command::Ping {} => {
+            let response = _client.ping().await;
             println!("Response: {:?}", response);
         }
         _ => {

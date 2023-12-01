@@ -1,5 +1,8 @@
 pub mod client;
 pub use client::Client;
 
+pub mod server;
+pub use server::{run, Cache};
+
 pub mod cmd;
-pub use cmd::Ping;
+pub use cmd::handle_request;

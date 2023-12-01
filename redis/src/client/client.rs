@@ -1,4 +1,3 @@
-use crate::cmd::Ping;
 use bytes::{Bytes, BytesMut};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt, BufWriter},
@@ -28,15 +27,9 @@ impl Client {
         Ok(Client { connection })
     }
 
-    // Sends a PING command to the server and returns the response.
-    // If a message is provided, the server will return it in the response.
-    // Takes in an optional message to send to the server.
-    // Takes in message as bytes, apply_encode() will convert to Vec<u8>.
-    // Returns a Result with the response from the server.
-    pub async fn ping(&mut self, msg: Option<Bytes>) -> Result<Bytes, std::io::Error> {
-        let ping = Ping::new(msg);
-        let msg = ping.apply_encode();
-        self.connection.stream.write_all(&msg).await?;
+    pub async fn ping(&mut self) -> Result<Bytes, std::io::Error> {
+        let msg = b"*1\r\n$4\r\nPING\r\n";
+        self.connection.stream.write_all(msg).await?;
         self.connection.stream.flush().await?;
         let mut buffer = Vec::new();
         self.connection.stream.read_buf(&mut buffer).await?;
